@@ -32,7 +32,9 @@ export class Project extends Scene {
         this.idletime=0;
         this.moving=false;
         this.finalz=0;
-        this.finalz=0;
+        this.finalx=0;
+        this.flytime=0;
+        this.cannon_power=10;
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
         //        you get to requirements 6 and 7 you will need different ones.
@@ -118,9 +120,18 @@ export class Project extends Scene {
         });
         this.key_triggered_button("launch", ["q"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.launch=!(this.launch);
+            this.launch=true;
             this.moving=true;
-
+        });
+        this.key_triggered_button("reload", ["e"], () => {
+            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            this.launch=false;
+            this.moving=false;
+            this.rotationX=0;
+            this.rotationY=0;
+            this.finalz=0;
+            this.finalx=0;
+            this.idletime+=this.flytime;
 
         });
     }
@@ -175,6 +186,7 @@ export class Project extends Scene {
 
         }
         else{
+            this.flytime+=dt;
             let yintial=2*Math.sin(this.rotationX);
             let xintial=-2*Math.cos(this.rotationX)*Math.sin(this.rotationY);
             let zintial=-2*Math.cos(this.rotationX)*Math.cos(this.rotationY);
@@ -205,16 +217,11 @@ export class Project extends Scene {
 
 
 
-
-
-
-
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
         this.shapes.box_2.draw(context, program_state,cannon_transformscaled,this.materials.phong)
 
         this.chocolate_transform = Mat4.translation(2,0,0);
         this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
-        this.bird_transform = Mat4.translation(4,0,0);
 
     }
 }
