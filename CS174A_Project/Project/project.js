@@ -175,6 +175,10 @@ export class Project extends Scene {
             {
                 this.cannon_power+=5;
             }
+            if(this.cannon_power>=50)
+            {
+                this.cannon_power=30;
+            }
 
         });
         this.key_triggered_button("decrease power", ["y"], () => {
@@ -285,7 +289,7 @@ export class Project extends Scene {
             this.shapes.bird.draw(context,program_state,bird_startingPosition.times(birdscale), this.materials.bird_texture);
         }
 
-        //if launching/lauched change bird coords
+        //if launchingiih/lauched change bird coords
         else
         {
             this.flytime+=dt;
