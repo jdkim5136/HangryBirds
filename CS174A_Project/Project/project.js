@@ -36,7 +36,7 @@ export class Project extends Scene {
         this.finalz=0;
         this.finalx=0;
         this.flytime=0;
-        this.cannon_power=50;
+        this.cannon_power=10;
         this.stopped=false;
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
@@ -168,12 +168,18 @@ export class Project extends Scene {
 
         });
         this.key_triggered_button("increase power", ["u"], () => {
-            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.cannon_power+=5;
+            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and of
+            if(!this.launch)
+            {
+                this.cannon_power+=5;
+            }
+
         });
         this.key_triggered_button("decrease power", ["y"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.cannon_power-=5;
+            if(!this.launch) {
+                this.cannon_power-=5;
+            }
             if(this.cannon_power<=5)
             {
                 this.cannon_power=5;
@@ -277,11 +283,11 @@ export class Project extends Scene {
         else
         {
             this.flytime+=dt;
-            //let tip_of_cannon = cannon_transform.times(vec4(0,0,2,0));
-            //let tip_of_cannonMag=Math.sqrt(tip_of_cannon[0]*tip_of_cannon[0]+tip_of_cannon[1]*tip_of_cannon[1]+tip_of_cannon[2]*tip_of_cannon[2]);
-            //let yintial=0;//6*Math.sin(this.rotationX);
-            //let xintial=0//-6*Math.cos(this.rotationX)*Math.sin(this.rotationY);
-            //let zintial=0;//-6*Math.cos(this.rotationX)*Math.cos(this.rotationY);
+            let tip_of_cannon = cannon_transform.times(vec4(0,0,2,0));
+            let tip_of_cannonMag=Math.sqrt(tip_of_cannon[0]*tip_of_cannon[0]+tip_of_cannon[1]*tip_of_cannon[1]+tip_of_cannon[2]*tip_of_cannon[2]);
+            let yintial=0;//6*Math.sin(this.rotationX);
+            let xintial=0//-6*Math.cos(this.rotationX)*Math.sin(this.rotationY);
+            let zintial=0;//-6*Math.cos(this.rotationX)*Math.cos(this.rotationY);
             let intialHorizontalVelo=this.cannon_power*Math.cos(this.rotationX);
             let intialYVelo=this.cannon_power*Math.sin(this.rotationX);
             let ypos= yintial+intialYVelo*(t-this.idletime)-4.9*(t-this.idletime)*(t-this.idletime);
