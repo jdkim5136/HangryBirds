@@ -23,9 +23,9 @@ export class Project extends Scene {
             box_2: new Cube(),
             axis: new Axis_Arrows()
         }
-        console.log(this.shapes.box_1.arrays.texture_coord)
-
-
+        console.log(this.shapes.box_1.arrays.texture_coord);
+        this.rotationX=0;
+        this.rotationY=0;
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
         //        you get to requirements 6 and 7 you will need different ones.
@@ -45,6 +45,54 @@ export class Project extends Scene {
 
     make_control_panel() {
         // TODO:  Implement requirement #5 using a key_triggered_button that responds to the 'c' key.
+        this.key_triggered_button("Rotate Up", ["i"], () => {
+            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            this.rotationX+=Math.PI/18.0;
+            if(this.rotationX<0)
+            {
+                this.rotationX=0;
+            }
+            if(this.rotationX>Math.PI/2)
+            {
+                this.rotationX=Math.PI/2;
+            }
+        });
+        this.key_triggered_button("Rotate Down", ["k"], () => {
+            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            this.rotationX-=Math.PI/18.0;
+            if(this.rotationX<0)
+            {
+                this.rotationX=0;
+            }
+            if(this.rotationX>Math.PI/2)
+            {
+                this.rotationX=Math.PI/2;
+            }
+        });
+        this.key_triggered_button("Rotate Left", ["j"], () => {
+            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            this.rotationY+=Math.PI/18.0;
+            if(this.rotationY<-Math.PI/2)
+            {
+                this.rotationY=-Math.PI/2;
+            }
+            if(this.rotationY>Math.PI/2)
+            {
+                this.rotationY=Math.PI/2;
+            }
+        });
+        this.key_triggered_button("Rotate Right", ["l"], () => {
+            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            this.rotationY-=Math.PI/18.0;
+            if(this.rotationY<-Math.PI/2)
+            {
+                this.rotationY=-Math.PI/2;
+            }
+            if(this.rotationY>Math.PI/2)
+            {
+                this.rotationY=Math.PI/2;
+            }
+        });
     }
 
     display(context, program_state) {
@@ -66,7 +114,26 @@ export class Project extends Scene {
         // TODO:  Draw the required boxes. Also update their stored matrices.
         // You can remove the folloeing line.
         this.box_1_transform = Mat4.translation(-2, 0, 0);
+        let cannon_transform =Mat4.identity();
+        let scale =Mat4.scale(0.5,0.5,2);
+        //rotating cannon code:
+
+        let rotationXMat =Mat4.rotation(this.rotationX,1,0,0);
+        let rotationYMat =Mat4.rotation(this.rotationY,0,1,0);
+        let shifttoedge=Mat4.translation(0,0,1,)
+
+        let shiftbackfromedge=Mat4.translation(0,0,-1,)
+        cannon_transform=cannon_transform.times(shifttoedge.times(rotationYMat.times(rotationXMat.times(shiftbackfromedge))));
+        cannon_transform=cannon_transform.times(scale);
+
+
+
+
+
+
+
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.shapes.box_2.draw(context, program_state,cannon_transform,this.materials.phong)
     }
 }
 
