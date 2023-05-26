@@ -24,6 +24,8 @@ export class Project extends Scene {
             axis: new Axis_Arrows(),
             chocolate: new defs.Square(),
             bird: new  defs.Subdivision_Sphere(4),
+            field: new Cube(),
+            seed: new  defs.Subdivision_Sphere(4),
         }
         console.log(this.shapes.box_1.arrays.texture_coord);
         this.rotationX=0;
@@ -49,16 +51,29 @@ export class Project extends Scene {
                 color: hex_color("#000000"),
                 ambient: 1,diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/birds.jpg")
-            })
+            }),
+            field_texture: new Material(new Textured_Phong(),{
+                color: hex_color("#000000"),
+                ambient: 1,diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/field.png")
+            }),
+            seed_texture: new Material(new Textured_Phong(),{
+                color: hex_color("#000000"),
+                ambient: 1,diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/seed.png")
+            }),
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
         this.shapes.bird.arrays.texture_coord.forEach(
             (v,i,l) => v[0] = v[0] * 2
         )
-        //this.shapes.bird.arrays.texture_coord.forEach(
-        // (v,i,l) => v[1] = v[1] * 2
-        //)
+        this.shapes.field.arrays.texture_coord.forEach(
+            (v,i,l) => v[0] = v[0] * 10
+        )
+        this.shapes.field.arrays.texture_coord.forEach(
+            (v,i,l) => v[1] = v[1] * 10
+        )
     }
 
     make_control_panel() {
@@ -117,7 +132,7 @@ export class Project extends Scene {
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
             // Define the global camera and projection matrices, which are stored in program_state.
-            program_state.set_camera(Mat4.translation(0, 0, -8));
+            program_state.set_camera(Mat4.translation(0, 0, -20));
         }
 
         program_state.projection_transform = Mat4.perspective(
@@ -130,15 +145,14 @@ export class Project extends Scene {
         let model_transform = Mat4.identity();
 
         // TODO:  Draw the required boxes. Also update their stored matrices.
-        // You can remove the folloeing line.
-        this.box_1_transform = Mat4.translation(-2, 0, 0);
+        // You can remove the following line.
         let cannon_transform =Mat4.identity();
         let scale =Mat4.scale(0.5,0.5,2);
         //rotating cannon code:
 
         let rotationXMat =Mat4.rotation(this.rotationX,1,0,0);
         let rotationYMat =Mat4.rotation(this.rotationY,0,1,0);
-        let shifttoedge=Mat4.translation(0,0,1,)
+        let shifttoedge=Mat4.translation(0,0,3,)
 
         let shiftbackfromedge=Mat4.translation(0,0,-1,)
         cannon_transform=cannon_transform.times(shifttoedge.times(rotationYMat.times(rotationXMat.times(shiftbackfromedge))));
@@ -146,17 +160,53 @@ export class Project extends Scene {
 
 
 
-
-
-
-
+       //draw box
+        this.box_1_transform = Mat4.translation(-2, 0, -5).times(Mat4.scale(0.8,0.8,0.8));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-1, 2, 0));
+        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(2, 0, 0));
+        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(2, 0, 0));
+        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(2, 0, 0));
+        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-1, -2, 0));
+        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-2,4,0));
+        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(4,0,0));
+        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-2,2,0));
+        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+
+        //cannon
         this.shapes.box_2.draw(context, program_state,cannon_transform,this.materials.phong)
 
-        this.chocolate_transform = Mat4.translation(2,0,0);
+        //chocolate
+        this.chocolate_transform = Mat4.translation(0,0,-4);
         this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
+        this.chocolate_transform = this.chocolate_transform.times(Mat4.translation(-2,3,-1));
+        this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
+        this.chocolate_transform = this.chocolate_transform.times(Mat4.translation(1,2,0));
+        this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
+
+        //bird
         this.bird_transform = Mat4.translation(4,0,0).times(Mat4.scale(0.3,0.3,0.3));
         this.shapes.bird.draw(context,program_state,this.bird_transform, this.materials.bird_texture);
+
+        //field
+        this.field_transform = Mat4.translation(0,-1,0).times(Mat4.scale(10,0.001,10))
+        this.shapes.field.draw(context, program_state, this.field_transform, this.materials.field_texture);
+
+        //seed
+        this.seed_transform = Mat4.translation(1,0,0).times(Mat4.scale(0.3,0.5,0.3))
+            .times(Mat4.translation(0,6,-17));
+        this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
+        this.seed_transform = this.seed_transform.times(Mat4.translation(6,-7,0));
+        this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
+        this.seed_transform = this.seed_transform.times(Mat4.translation(0,10,0));
+        this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
     }
 }
 
