@@ -36,7 +36,7 @@ export class Project extends Scene {
         this.finalz=0;
         this.finalx=0;
         this.flytime=0;
-        this.cannon_power=10;
+        this.cannon_power=50;
         this.stopped=false;
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
@@ -249,19 +249,22 @@ export class Project extends Scene {
 
         let rotationXMat =Mat4.rotation(this.rotationX,1,0,0);
         let rotationYMat =Mat4.rotation(this.rotationY,0,1,0);
-        let shifttoedge=Mat4.translation(0,0,1,)
+        let shifttoedge=Mat4.translation(0,-1,2,)
 
-        let shiftbackfromedge=Mat4.translation(0,0,-1,)
+        let shiftbackfromedge=Mat4.translation(0,1,-2,)
         cannon_transform=cannon_transform.times(shifttoedge.times(rotationYMat.times(rotationXMat.times(shiftbackfromedge))));
         //let cannon_transformscaled=cannon_transform.times(scale);
         this.shapes.box_2.draw(context, program_state,cannon_transform.times(scalebarrel),this.materials.phong);
         this.shapes.box_2.draw(context, program_state,cannon_transform.times(base_transform.times(scalebase)),this.materials.phong)
+        this.shapes.box_2.draw(context,program_state,model_transform.times(Mat4.scale(0.1,50,0.1)), this.materials.phong)
 
 
         //set up birds coords while aiming
         let bird_startingPosition=Mat4.translation(0,0,-2);
         bird_startingPosition=cannon_transform.times(bird_startingPosition);
         let birdscale=Mat4.scale(0.5,0.5,0.5);
+
+
 
 
         if(!(this.launch))
@@ -274,9 +277,11 @@ export class Project extends Scene {
         else
         {
             this.flytime+=dt;
-            let yintial=2*Math.sin(this.rotationX);
-            let xintial=-2*Math.cos(this.rotationX)*Math.sin(this.rotationY);
-            let zintial=-2*Math.cos(this.rotationX)*Math.cos(this.rotationY);
+            //let tip_of_cannon = cannon_transform.times(vec4(0,0,2,0));
+            //let tip_of_cannonMag=Math.sqrt(tip_of_cannon[0]*tip_of_cannon[0]+tip_of_cannon[1]*tip_of_cannon[1]+tip_of_cannon[2]*tip_of_cannon[2]);
+            //let yintial=0;//6*Math.sin(this.rotationX);
+            //let xintial=0//-6*Math.cos(this.rotationX)*Math.sin(this.rotationY);
+            //let zintial=0;//-6*Math.cos(this.rotationX)*Math.cos(this.rotationY);
             let intialHorizontalVelo=this.cannon_power*Math.cos(this.rotationX);
             let intialYVelo=this.cannon_power*Math.sin(this.rotationX);
             let ypos= yintial+intialYVelo*(t-this.idletime)-4.9*(t-this.idletime)*(t-this.idletime);
@@ -286,29 +291,22 @@ export class Project extends Scene {
 
             if(!this.moving)
             {
-                ypos = 0;
+                ypos = -1;
                 zpos=this.finalz;
                 xpos=this.finalx;
             }
-            else if(ypos<=0&&this.moving&&!(this.stopped))
+            else if(ypos<=-1&&this.moving&&!(this.stopped))
             {
                 this.moving=false;
                 this.stopped=true;
-                ypos = 0;
+                ypos = -1;
                 this.finalz=zpos;
                 this.finalx=xpos;
             }
             let projectile_translations= Mat4.translation(xpos,ypos,zpos);
-            this.shapes.bird.draw(context,program_state,projectile_translations.times(birdscale), this.materials.bird_texture);
+            this.shapes.bird.draw(context,program_state,projectile_translations.times(cannon_transform.times(birdscale)), this.materials.bird_texture);
         }
 
-
-
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
-
-
-        this.chocolate_transform = Mat4.translation(2,0,0);
-        this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
 
     }
 }
