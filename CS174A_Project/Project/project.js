@@ -32,6 +32,7 @@ export class Project extends Scene {
         this.idletime=0;
         this.moving=false;
         this.finalz=0;
+        this.finalz=0;
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
         //        you get to requirements 6 and 7 you will need different ones.
@@ -158,37 +159,47 @@ export class Project extends Scene {
         let cannon_normal = vec4(0,0,1,0);
         cannon_normal= total_rotation.times(cannon_normal);
         //this is the intial velo mag of the bird
-        let cannon_power=50;
+        let cannon_power=10;
         let bird_startingPosition=Mat4.translation(0,0,-2);
         bird_startingPosition=cannon_transform.times(bird_startingPosition);
+        let birdscale=Mat4.scale(0.5,0.5,0.5);
 
         if(!(this.launch))
         {
             this.idletime=this.idletime+dt;
-            this.shapes.bird.draw(context,program_state,bird_startingPosition, this.materials.bird_texture);
+            this.shapes.bird.draw(context,program_state,bird_startingPosition.times(birdscale), this.materials.bird_texture);
+
 
         }
         else{
+            let yintial=2*Math.sin(this.rotationX);
+            let xintial=-2*Math.cos(this.rotationX)*Math.sin(this.rotationY);
+            let zintial=-2*Math.cos(this.rotationX)*Math.cos(this.rotationY);
             let intialZVelo=cannon_power*Math.cos(this.rotationX);
             let intialYVelo=cannon_power*Math.sin(this.rotationX);
-            let ypos= intialYVelo*(t-this.idletime)-4.9*(t-this.idletime)*(t-this.idletime);
-            let zpos=-(intialZVelo*(t-this.idletime));
-            // if(ypos<=0&&this.moving)
-            // {
-            //     this.moving=false;
-            //     ypos = 0;
-            //     this.finalz=zpos;
-            // }
-            // else if(!this.moving)
-            // {
-            //     ypos = 0;
-            //     zpos=this.finalz;
-            // }
+            let ypos= yintial+intialYVelo*(t-this.idletime)-4.9*(t-this.idletime)*(t-this.idletime);
+            let horizontal_position=-(intialZVelo*(t-this.idletime));
+            let xpos= xintial+Math.sin(this.rotationY)*horizontal_position;
+            let zpos= zintial+Math.cos(this.rotationY)*horizontal_position;
+
+            if(ypos<=0&&this.moving)
+            {
+                this.moving=false;
+                ypos = 0;
+                this.finalz=zpos;
+                this.finalx=xpos;
+            }
+            else if(!this.moving)
+            {
+                ypos = 0;
+                zpos=this.finalz;
+                xpos=this.finalx;
+            }
 
 
-            let projectile_translations= Mat4.translation(0,ypos,zpos);
+            let projectile_translations= Mat4.translation(xpos,ypos,zpos);
             let total_projectile=cannon_transform.times(projectile_translations);
-            this.shapes.bird.draw(context,program_state,bird_startingPosition.times(projectile_translations), this.materials.bird_texture);
+            this.shapes.bird.draw(context,program_state,projectile_translations.times(birdscale), this.materials.bird_texture);
 
         }
 
