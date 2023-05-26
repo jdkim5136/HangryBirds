@@ -155,7 +155,7 @@ export class Project extends Scene {
 
         this.chocolate_transform = Mat4.translation(2,0,0);
         this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
-        this.bird_transform = Mat4.translation(4,0,0);
+        this.bird_transform = Mat4.translation(4,0,0).times(Mat4.scale(0.3,0.3,0.3));
         this.shapes.bird.draw(context,program_state,this.bird_transform, this.materials.bird_texture);
     }
 }
