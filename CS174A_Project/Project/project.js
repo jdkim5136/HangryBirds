@@ -35,6 +35,7 @@ export class Project extends Scene {
         this.finalx=0;
         this.flytime=0;
         this.cannon_power=10;
+        this.stopped=false;
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
         //        you get to requirements 6 and 7 you will need different ones.
@@ -72,7 +73,9 @@ export class Project extends Scene {
         // TODO:  Implement requirement #5 using a key_triggered_button that responds to the 'c' key.
         this.key_triggered_button("Rotate Up", ["i"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.rotationX+=Math.PI/18.0;
+            if(!(this.launch)) {
+                this.rotationX += Math.PI / 18.0;
+            }
             if(this.rotationX<0)
             {
                 this.rotationX=0;
@@ -84,7 +87,9 @@ export class Project extends Scene {
         });
         this.key_triggered_button("Rotate Down", ["k"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.rotationX-=Math.PI/18.0;
+            if(!(this.launch)) {
+                this.rotationX -= Math.PI / 18.0;
+            }
             if(this.rotationX<0)
             {
                 this.rotationX=0;
@@ -96,7 +101,9 @@ export class Project extends Scene {
         });
         this.key_triggered_button("Rotate Left", ["j"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.rotationY+=Math.PI/18.0;
+            if(!(this.launch)) {
+                this.rotationY += Math.PI / 18.0;
+            }
             if(this.rotationY<-Math.PI/2)
             {
                 this.rotationY=-Math.PI/2;
@@ -108,7 +115,11 @@ export class Project extends Scene {
         });
         this.key_triggered_button("Rotate Right", ["l"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.rotationY-=Math.PI/18.0;
+
+            if(!(this.launch))
+            {
+                this.rotationY-=Math.PI/18.0;
+            }
             if(this.rotationY<-Math.PI/2)
             {
                 this.rotationY=-Math.PI/2;
@@ -120,8 +131,12 @@ export class Project extends Scene {
         });
         this.key_triggered_button("launch", ["q"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.launch=true;
-            this.moving=true;
+            if(!this.stopped)
+            {
+                this.launch=true;
+                this.moving=true;
+            }
+
         });
         this.key_triggered_button("reload", ["e"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
@@ -131,7 +146,21 @@ export class Project extends Scene {
             this.rotationY=0;
             this.finalz=0;
             this.finalx=0;
+            this.stopped=false;
             this.idletime+=this.flytime;
+
+        });
+        this.key_triggered_button("increase power", ["u"], () => {
+            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            this.cannon_power+=5;
+        });
+        this.key_triggered_button("decrease power", ["y"], () => {
+            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            this.cannon_power-=5;
+            if(this.cannon_power<=5)
+            {
+                this.cannon_power=5;
+            }
 
         });
     }
@@ -170,7 +199,7 @@ export class Project extends Scene {
         let cannon_normal = vec4(0,0,1,0);
         cannon_normal= total_rotation.times(cannon_normal);
         //this is the intial velo mag of the bird
-        let cannon_power=10;
+        //let cannon_power=10;
         let bird_startingPosition=Mat4.translation(0,0,-2);
         bird_startingPosition=cannon_transform.times(bird_startingPosition);
         let birdscale=Mat4.scale(0.5,0.5,0.5);
@@ -182,33 +211,33 @@ export class Project extends Scene {
         {
             this.idletime=this.idletime+dt;
             this.shapes.bird.draw(context,program_state,bird_startingPosition.times(birdscale), this.materials.bird_texture);
-
-
         }
-        else{
+        else
+        {
             this.flytime+=dt;
             let yintial=2*Math.sin(this.rotationX);
             let xintial=-2*Math.cos(this.rotationX)*Math.sin(this.rotationY);
             let zintial=-2*Math.cos(this.rotationX)*Math.cos(this.rotationY);
-            let intialZVelo=cannon_power*Math.cos(this.rotationX);
-            let intialYVelo=cannon_power*Math.sin(this.rotationX);
+            let intialHorizontalVelo=this.cannon_power*Math.cos(this.rotationX);
+            let intialYVelo=this.cannon_power*Math.sin(this.rotationX);
             let ypos= yintial+intialYVelo*(t-this.idletime)-4.9*(t-this.idletime)*(t-this.idletime);
-            let horizontal_position=-(intialZVelo*(t-this.idletime));
+            let horizontal_position=-(intialHorizontalVelo*(t-this.idletime));
             let xpos= xintial+Math.sin(this.rotationY)*horizontal_position;
             let zpos= zintial+Math.cos(this.rotationY)*horizontal_position;
 
-            if(ypos<=0&&this.moving)
-            {
-                this.moving=false;
-                ypos = 0;
-                this.finalz=zpos;
-                this.finalx=xpos;
-            }
-            else if(!this.moving)
+            if(!this.moving)
             {
                 ypos = 0;
                 zpos=this.finalz;
                 xpos=this.finalx;
+            }
+            else if(ypos<=0&&this.moving)
+            {
+                this.moving=false;
+                this.stopped=true;
+                ypos = 0;
+                this.finalz=zpos;
+                this.finalx=xpos;
             }
             let projectile_translations= Mat4.translation(xpos,ypos,zpos);
             this.shapes.bird.draw(context,program_state,projectile_translations.times(birdscale), this.materials.bird_texture);
