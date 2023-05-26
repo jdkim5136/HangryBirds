@@ -21,7 +21,9 @@ export class Project extends Scene {
         this.shapes = {
             box_1: new Cube(),
             box_2: new Cube(),
-            axis: new Axis_Arrows()
+            axis: new Axis_Arrows(),
+            chocolate: new defs.Square(),
+            bird: new  defs.Subdivision_Sphere(4),
         }
         console.log(this.shapes.box_1.arrays.texture_coord);
         this.rotationX=0;
@@ -38,9 +40,25 @@ export class Project extends Scene {
                 ambient: 1.0, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/wooden_crate2.jpg")
             }),
+            chocolate_texture: new Material(new Textured_Phong(),{
+                color: hex_color("#000000"),
+                ambient:1.0, diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/Chocolate.png")
+            }),
+            bird_texture: new Material(new Textured_Phong(),{
+                color: hex_color("#000000"),
+                ambient: 1,diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/birds.jpg")
+            })
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        this.shapes.bird.arrays.texture_coord.forEach(
+            (v,i,l) => v[0] = v[0] * 2
+        )
+        //this.shapes.bird.arrays.texture_coord.forEach(
+        // (v,i,l) => v[1] = v[1] * 2
+        //)
     }
 
     make_control_panel() {
@@ -134,6 +152,11 @@ export class Project extends Scene {
 
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
         this.shapes.box_2.draw(context, program_state,cannon_transform,this.materials.phong)
+
+        this.chocolate_transform = Mat4.translation(2,0,0);
+        this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
+        this.bird_transform = Mat4.translation(4,0,0);
+        this.shapes.bird.draw(context,program_state,this.bird_transform, this.materials.bird_texture);
     }
 }
 
