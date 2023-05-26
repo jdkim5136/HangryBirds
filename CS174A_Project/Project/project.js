@@ -151,6 +151,7 @@ export class Project extends Scene {
             {
                 this.launch=true;
                 this.moving=true;
+                this.flytime=0;
             }
 
         });
@@ -289,7 +290,7 @@ export class Project extends Scene {
                 zpos=this.finalz;
                 xpos=this.finalx;
             }
-            else if(ypos<=0&&this.moving)
+            else if(ypos<=0&&this.moving&&!(this.stopped))
             {
                 this.moving=false;
                 this.stopped=true;
