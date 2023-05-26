@@ -255,20 +255,20 @@ export class Project extends Scene {
 
         let rotationXMat =Mat4.rotation(this.rotationX,1,0,0);
         let rotationYMat =Mat4.rotation(this.rotationY,0,1,0);
-        let shifttoedge=Mat4.translation(0,-1,2,)
+        let shifttoedge=Mat4.translation(0,0,-2,)
 
-        let shiftbackfromedge=Mat4.translation(0,1,-2,)
-        cannon_transform=cannon_transform.times(shifttoedge.times(rotationYMat.times(rotationXMat.times(shiftbackfromedge))));
+        let shiftbackfromedge=Mat4.translation(0,0,2,)
+        //removed shiftbackfromedge
+        cannon_transform=cannon_transform.times(rotationYMat.times(rotationXMat.times(shifttoedge)));
         //let cannon_transformscaled=cannon_transform.times(scale);
         this.shapes.box_2.draw(context, program_state,cannon_transform.times(scalebarrel),this.materials.phong);
         this.shapes.box_2.draw(context, program_state,cannon_transform.times(base_transform.times(scalebase)),this.materials.phong)
-        this.shapes.box_2.draw(context,program_state,model_transform.times(Mat4.scale(0.1,50,0.1)), this.materials.phong)
-
 
         //set up birds coords while aiming
         let bird_startingPosition=Mat4.translation(0,0,-2);
         bird_startingPosition=cannon_transform.times(bird_startingPosition);
-        let birdscale=Mat4.scale(0.5,0.5,0.5);
+        let birdscale=Mat4.scale(0.3,0.3,0.3);
+
 
 
 
@@ -283,17 +283,23 @@ export class Project extends Scene {
         else
         {
             this.flytime+=dt;
-            let tip_of_cannon = cannon_transform.times(vec4(0,0,2,0));
-            let tip_of_cannonMag=Math.sqrt(tip_of_cannon[0]*tip_of_cannon[0]+tip_of_cannon[1]*tip_of_cannon[1]+tip_of_cannon[2]*tip_of_cannon[2]);
-            let yintial=0;//6*Math.sin(this.rotationX);
-            let xintial=0//-6*Math.cos(this.rotationX)*Math.sin(this.rotationY);
-            let zintial=0;//-6*Math.cos(this.rotationX)*Math.cos(this.rotationY);
+            let tip_of_cannon = rotationYMat.times(rotationXMat.times(vec4(0,0,2,1)));
+
+            //let rotate=Mat4.rotation(0,tip_of_cannon[0],tip_of_cannon[1],tip_of_cannon[2])
+
+            //let tip_of_cannonMag=Math.sqrt(tip_of_cannon[0]*tip_of_cannon[0]+tip_of_cannon[1]*tip_of_cannon[1]+tip_of_cannon[2]*tip_of_cannon[2]);
+            let yintial=-tip_of_cannon[1];//*Math.sin(this.rotationX);
+            let xintial=-tip_of_cannon[0];//-2*Math.cos(this.rotationX)*Math.sin(this.rotationY);
+            let zintial=-tip_of_cannon[2];//-2*Math.cos(this.rotationX)*Math.cos(this.rotationY);
             let intialHorizontalVelo=this.cannon_power*Math.cos(this.rotationX);
             let intialYVelo=this.cannon_power*Math.sin(this.rotationX);
             let ypos= yintial+intialYVelo*(t-this.idletime)-4.9*(t-this.idletime)*(t-this.idletime);
             let horizontal_position=-(intialHorizontalVelo*(t-this.idletime));
             let xpos= xintial+Math.sin(this.rotationY)*horizontal_position;
             let zpos= zintial+Math.cos(this.rotationY)*horizontal_position;
+
+
+            //let translate= rotationYMat.times(shiftbackfromedge.times(Mat4.translation(0,ypos+2*Math.sin(this.rotationX),horizontal_position-2*Math.cos(this.rotationX))));
 
             if(!this.moving)
             {
@@ -310,7 +316,7 @@ export class Project extends Scene {
                 this.finalx=xpos;
             }
             let projectile_translations= Mat4.translation(xpos,ypos,zpos);
-            this.shapes.bird.draw(context,program_state,projectile_translations.times(cannon_transform.times(birdscale)), this.materials.bird_texture);
+            this.shapes.bird.draw(context,program_state,projectile_translations.times(rotationYMat.times(rotationXMat.times(birdscale))), this.materials.bird_texture);
         }
 
 
