@@ -38,6 +38,7 @@ export class Project extends Scene {
         this.flytime=0;
         this.cannon_power=10;
         this.stopped=false;
+        this.finaltheta=0;
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
         //        you get to requirements 6 and 7 you will need different ones.
@@ -164,6 +165,7 @@ export class Project extends Scene {
             this.finalz=0;
             this.finalx=0;
             this.stopped=false;
+            this.finaltheta=0;
             this.idletime+=this.flytime;
 
         });
@@ -302,12 +304,16 @@ export class Project extends Scene {
             let xpos= xintial+Math.sin(this.rotationY)*horizontal_position;
             let zpos= zintial+Math.cos(this.rotationY)*horizontal_position;
 
+            let theta=Math.atan((intialYVelo-9.8*(t-this.idletime))/intialHorizontalVelo);
+
+
 
             if(!this.moving)
             {
                 ypos = -1;
                 zpos=this.finalz;
                 xpos=this.finalx;
+                theta=this.finaltheta
             }
             else if(ypos<=-1&&this.moving&&!(this.stopped))
             {
@@ -316,11 +322,12 @@ export class Project extends Scene {
                 ypos = -1;
                 this.finalz=zpos;
                 this.finalx=xpos;
+                this.finaltheta=theta;
             }
             let projectile_translations= Mat4.translation(xpos,ypos,zpos);
-            //let theta=Math.atan((intialYVelo-9.8*(t-this.idletime))/intialHorizontalVelo);
-            //let birdrotation=rotationYMat.times(Mat4.rotation(theta,1,0,0));//rotationYMat.times(
-            let birdrotation=rotationYMat.times(rotationXMat);
+            let birdrotation=rotationYMat.times(Mat4.rotation(theta,1,0,0));//rotationYMat.times(
+            //let birdrotation=rotationYMat.times(rotationXMat);
+
             this.shapes.bird.draw(context,program_state,projectile_translations.times(birdrotation.times(birdscale)), this.materials.bird_texture);
         }
 
