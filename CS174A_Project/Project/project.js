@@ -194,6 +194,46 @@ export class Project extends Scene {
         });
     }
 
+    displaypath(context,program_state, cannon,rotateX,rotateY){
+        let scaler=Mat4.scale(0.08,0.08,0.08);
+        for(let i=0;i<100;i+=0.05)
+        {
+
+            let tip_of_cannon = rotateY.times(rotateX.times(vec4(0,0,2,1)));
+
+            //let rotate=Mat4.rotation(0,tip_of_cannon[0],tip_of_cannon[1],tip_of_cannon[2])
+            //let translate= rotationYMat.times(shiftbackfromedge.times(Mat4.translation(0,ypos+2*Math.sin(this.rotationX),horizontal_position-2*Math.cos(this.rotationX))));
+
+            let yintial=-tip_of_cannon[1];//2*Math.sin(this.rotationX);
+            let xintial=-tip_of_cannon[0];//-2*Math.cos(this.rotationX)*Math.sin(this.rotationY);
+            let zintial=-tip_of_cannon[2];//-2*Math.cos(this.rotationX)*Math.cos(this.rotationY);
+            let intialHorizontalVelo=this.cannon_power*Math.cos(this.rotationX);
+            let intialYVelo=this.cannon_power*Math.sin(this.rotationX);
+            let ypos= yintial+intialYVelo*(i)-4.9*(i)*(i);
+            let horizontal_position=-(intialHorizontalVelo*(i));
+            let xpos= xintial+Math.sin(this.rotationY)*horizontal_position;
+            let zpos= zintial+Math.cos(this.rotationY)*horizontal_position;
+            if(ypos<=-1)
+            {
+                break;
+            }
+
+            let projectile_translations= Mat4.translation(xpos,ypos,zpos);
+            let theta=Math.atan((intialYVelo-9.8*(i))/intialHorizontalVelo);
+            let objectrotation=rotateY.times(Mat4.rotation(theta,1,0,0));//rotationYMat.times(
+            this.shapes.bird.draw(context,program_state,projectile_translations.times(objectrotation.times(scaler)), this.materials.phong.override({color: hex_color("#FFFF00")}));
+
+        }
+    }
+
+
+
+
+
+
+
+
+
     display(context, program_state) {
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
@@ -287,6 +327,7 @@ export class Project extends Scene {
         {
             this.idletime=this.idletime+dt;
             this.shapes.bird.draw(context,program_state,bird_startingPosition.times(birdscale), this.materials.bird_texture);
+            this.displaypath(context,program_state,cannon_transform,rotationXMat,rotationYMat)
         }
 
         //if launchingiih/lauched change bird coords
