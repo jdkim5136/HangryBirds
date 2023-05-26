@@ -199,7 +199,7 @@ export class Project extends Scene {
         for(let i=0;i<100;i+=0.05)
         {
 
-            let tip_of_cannon = rotateY.times(rotateX.times(vec4(0,0,2,1)));
+            let tip_of_cannon = rotateY.times(rotateX.times(vec4(0,0,4,1)));
 
             //let rotate=Mat4.rotation(0,tip_of_cannon[0],tip_of_cannon[1],tip_of_cannon[2])
             //let translate= rotationYMat.times(shiftbackfromedge.times(Mat4.translation(0,ypos+2*Math.sin(this.rotationX),horizontal_position-2*Math.cos(this.rotationX))));
@@ -221,7 +221,7 @@ export class Project extends Scene {
             let projectile_translations= Mat4.translation(xpos,ypos,zpos);
             let theta=Math.atan((intialYVelo-9.8*(i))/intialHorizontalVelo);
             let objectrotation=rotateY.times(Mat4.rotation(theta,1,0,0));//rotationYMat.times(
-            this.shapes.bird.draw(context,program_state,projectile_translations.times(objectrotation.times(scaler)), this.materials.phong.override({color: hex_color("#FFFF00")}));
+            this.shapes.bird.draw(context,program_state,projectile_translations.times(objectrotation.times(scaler)), this.materials.phong.override({color: hex_color("#ffd609")}));
 
         }
     }
@@ -334,7 +334,7 @@ export class Project extends Scene {
         else
         {
             this.flytime+=dt;
-            let tip_of_cannon = rotationYMat.times(rotationXMat.times(vec4(0,0,2,1)));
+            let tip_of_cannon = rotationYMat.times(rotationXMat.times(vec4(0,0,4,1)));
 
             //let rotate=Mat4.rotation(0,tip_of_cannon[0],tip_of_cannon[1],tip_of_cannon[2])
             //let translate= rotationYMat.times(shiftbackfromedge.times(Mat4.translation(0,ypos+2*Math.sin(this.rotationX),horizontal_position-2*Math.cos(this.rotationX))));
