@@ -164,6 +164,9 @@ export class Project extends Scene {
         bird_startingPosition=cannon_transform.times(bird_startingPosition);
         let birdscale=Mat4.scale(0.5,0.5,0.5);
 
+
+
+
         if(!(this.launch))
         {
             this.idletime=this.idletime+dt;
@@ -195,10 +198,7 @@ export class Project extends Scene {
                 zpos=this.finalz;
                 xpos=this.finalx;
             }
-
-
             let projectile_translations= Mat4.translation(xpos,ypos,zpos);
-            let total_projectile=cannon_transform.times(projectile_translations);
             this.shapes.bird.draw(context,program_state,projectile_translations.times(birdscale), this.materials.bird_texture);
 
         }
