@@ -26,8 +26,11 @@ export class Project extends Scene {
             bird: new  defs.Subdivision_Sphere(4),
             field: new Cube(),
             seed: new  defs.Subdivision_Sphere(4),
+            sky: new defs.Subdivision_Sphere(3),
         }
         console.log(this.shapes.box_1.arrays.texture_coord);
+
+        // Cannon Variables
         this.rotationX=0;
         this.rotationY=0;
         this.launch=false;
@@ -70,6 +73,11 @@ export class Project extends Scene {
                 color: hex_color("#000000"),
                 ambient: 1,diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/seed.png")
+            }),
+            sky_texture: new Material(new Textured_Phong(),{
+                color: hex_color("#000000"),
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/sky.png")
             }),
 
         }
@@ -227,13 +235,6 @@ export class Project extends Scene {
     }
 
 
-
-
-
-
-
-
-
     display(context, program_state) {
         if (!context.scratchpad.controls) {
             this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
@@ -251,6 +252,10 @@ export class Project extends Scene {
         let model_transform = Mat4.identity();
 
         // TODO:  Draw the required boxes. Also update their stored matrices.
+        // draw background
+        this.sky_transform = Mat4.identity();
+        this.sky_transform = this.sky_transform.times(Mat4.scale(60,60,60));
+        this.shapes.sky.draw(context, program_state, this.sky_transform, this.materials.sky_texture);
 
         //draw box
         this.box_1_transform = Mat4.translation(-2, 0, -5).times(Mat4.scale(0.8,0.8,0.8));
@@ -281,7 +286,7 @@ export class Project extends Scene {
         this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
 
         //field
-        this.field_transform = Mat4.translation(0,-1,0).times(Mat4.scale(10,0.001,10))
+        this.field_transform = Mat4.translation(0,-1,0).times(Mat4.scale(60,0.001,60))
         this.shapes.field.draw(context, program_state, this.field_transform, this.materials.field_texture);
 
         //seed
