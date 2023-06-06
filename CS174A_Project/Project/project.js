@@ -1,4 +1,5 @@
 import {defs, tiny} from './examples/common.js';
+import {Text_Line} from './examples/text-demo.js';
 
 const {
     Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Material, Scene, Texture,
@@ -92,6 +93,12 @@ export class Project extends Scene {
         this.shapes.field.arrays.texture_coord.forEach(
             (v,i,l) => v[1] = v[1] * 10
         )
+        
+        //counting birds, food
+        this.add_text = new add_text(this);
+        this.remaining_bird = 2;
+        this.food_count = 3;
+        
     }
 
     make_control_panel() {
@@ -161,6 +168,7 @@ export class Project extends Scene {
                 this.launch=true;
                 this.moving=true;
                 this.flytime=0;
+                this.remaining_bird-=1;
             }
 
         });
@@ -258,7 +266,7 @@ export class Project extends Scene {
         this.shapes.sky.draw(context, program_state, this.sky_transform, this.materials.sky_texture);
 
         //draw box
-        this.box_1_transform = Mat4.translation(-2, 0, -5).times(Mat4.scale(0.8,0.8,0.8));
+        this.box_1_transform = Mat4.translation(-2, 0, -15).times(Mat4.scale(0.8,0.8,0.8));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(-1, 2, 0));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
@@ -278,7 +286,7 @@ export class Project extends Scene {
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
 
         //chocolate
-        this.chocolate_transform = Mat4.translation(0,0,-4);
+        this.chocolate_transform = Mat4.translation(0,0,-14);
         this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
         this.chocolate_transform = this.chocolate_transform.times(Mat4.translation(-2,3,-1));
         this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
@@ -290,7 +298,7 @@ export class Project extends Scene {
         this.shapes.field.draw(context, program_state, this.field_transform, this.materials.field_texture);
 
         //seed
-        this.seed_transform = Mat4.translation(1,0,0).times(Mat4.scale(0.3,0.5,0.3)).times(Mat4.translation(0,6,-17));
+        this.seed_transform = Mat4.translation(1,0,-10).times(Mat4.scale(0.3,0.5,0.3)).times(Mat4.translation(0,6,-17));
         this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
         this.seed_transform = this.seed_transform.times(Mat4.translation(6,-7,0));
         this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
@@ -380,8 +388,38 @@ export class Project extends Scene {
 
             this.shapes.bird.draw(context,program_state,projectile_translations.times(birdrotation.times(birdscale)), this.materials.bird_texture);
         }
+        
+        //display text
+        let lives = this.add_text.create_text(
+            this.add_text.transformation_function([-3.5,-1.6,-5],[0.1,0.1,1]), "Birds: "+  this.remaining_bird
+        );
+        let power = this.add_text.create_text(
+            this.add_text.transformation_function([-3.5,-1.9,-5],[0.1,0.1,1]), "Power: "+ this.cannon_power
+        );
+        let food = this.add_text.create_text(
+            this.add_text.transformation_function([-3.5,-1.3,-5],[0.1,0.1,1]), "Food: "+ this.food_count
+        );
+        let game_over = this.add_text.create_text(
+            this.add_text.transformation_function([-3.4,0.4,-5],[0.5,0.5,1]), "Game Over!"
+        );
+
+        lives["shape"].set_string(lives.text, context.context);
+        lives["shape"].draw(context,program_state,lives["transform"](program_state.camera_inverse),lives["material"]);
+
+        power["shape"].set_string(power.text, context.context);
+        power["shape"].draw(context,program_state,power["transform"](program_state.camera_inverse),power["material"]);
+        food["shape"].set_string(food.text, context.context);
+        food["shape"].draw(context,program_state,food["transform"](program_state.camera_inverse),food["material"]);
 
 
+
+        //display game over
+        //if remaining_bird < 0 and food > 1
+        if (this.remaining_bird < 0 && this.food_count > 0){
+            game_over["shape"].set_string(game_over.text, context.context);
+            game_over["shape"].draw(context,program_state,game_over["transform"](program_state.camera_inverse),game_over["material"]);
+        }
+        
     }
 }
 
@@ -426,3 +464,39 @@ class Texture_Rotate extends Textured_Phong {
     }
 }
 
+export class add_text{
+    constructor(parent){
+        this.parent = parent;
+        this.shapes = {
+            text_shape: new Text_Line(10),
+        }
+        this.materials = {
+            text_texture: new Material(new Textured_Phong(),{
+                ambient: 1, diffusivity: 0, specularity: 0,
+                texture: new Texture("assets/text.png")
+            }),
+        }
+    }
+
+    transformation_function(translation_coord, scale_factor=[1,1,1]){
+        function transform(camera_matrix){
+            camera_matrix = Mat4.inverse(camera_matrix);
+            camera_matrix = camera_matrix.times(Mat4.translation(...translation_coord));
+            camera_matrix = camera_matrix.times(Mat4.scale(...scale_factor));
+            return camera_matrix;
+        }
+        return transform;
+    }
+
+    create_text(transform, text){
+        return{
+            "shape": this.shapes.text_shape,
+            "material": this.materials.text_texture,
+            "transform": transform,
+            "text": text
+        }
+    }
+
+
+
+}
