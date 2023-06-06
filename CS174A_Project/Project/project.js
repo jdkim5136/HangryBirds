@@ -268,17 +268,17 @@ export class Project extends Scene {
         //draw box
         this.box_1_transform = Mat4.translation(-2, 0, -15).times(Mat4.scale(0.8,0.8,0.8));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
-        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-1, 2, 0));
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(4, 0, 0));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
-        this.box_1_transform = this.box_1_transform.times(Mat4.translation(2, 0, 0));
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-2, 2, 0));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
-        this.box_1_transform = this.box_1_transform.times(Mat4.translation(2, 0, 0));
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(4, -2, -5));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
-        this.box_1_transform = this.box_1_transform.times(Mat4.translation(2, 0, 0));
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-4, 0, 0));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
-        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-1, -2, 0));
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-4, 0, 0));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
-        this.box_1_transform = this.box_1_transform.times(Mat4.translation(-2,4,0));
+        this.box_1_transform = this.box_1_transform.times(Mat4.translation(2,2,0));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(4,0,0));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
@@ -286,23 +286,23 @@ export class Project extends Scene {
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
 
         //chocolate
-        this.chocolate_transform = Mat4.translation(0,0,-14);
+        this.chocolate_transform = Mat4.translation(2,2,-14.3);
         this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
-        this.chocolate_transform = this.chocolate_transform.times(Mat4.translation(-2,3,-1));
+        this.chocolate_transform = this.chocolate_transform.times(Mat4.translation(-3.8,1.5,0));
         this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
-        this.chocolate_transform = this.chocolate_transform.times(Mat4.translation(1,2,0));
-        this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
+        //this.chocolate_transform = this.chocolate_transform.times(Mat4.translation(1,2,0));
+        //this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
 
         //field
         this.field_transform = Mat4.translation(0,-1,0).times(Mat4.scale(60,0.001,60))
         this.shapes.field.draw(context, program_state, this.field_transform, this.materials.field_texture);
 
         //seed
-        this.seed_transform = Mat4.translation(1,0,-10).times(Mat4.scale(0.3,0.5,0.3)).times(Mat4.translation(0,6,-17));
+        this.seed_transform = Mat4.translation(0,0,-9).times(Mat4.scale(0.3,0.5,0.3)).times(Mat4.translation(0,6,-17));
         this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
-        this.seed_transform = this.seed_transform.times(Mat4.translation(6,-7,0));
+        this.seed_transform = this.seed_transform.times(Mat4.translation(0,3.2,-15));
         this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
-        this.seed_transform = this.seed_transform.times(Mat4.translation(0,10,0));
+        this.seed_transform = this.seed_transform.times(Mat4.translation(-10.4,-6,0));
         this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
 
 
