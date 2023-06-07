@@ -43,6 +43,8 @@ export class Project extends Scene {
         this.cannon_power=10;
         this.stopped=false;
         this.finaltheta=0;
+        this.restart = false;
+        this.game_over = false;
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
         //        you get to requirements 6 and 7 you will need different ones.
@@ -174,37 +176,63 @@ export class Project extends Scene {
         });
         this.key_triggered_button("reload", ["e"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.launch=false;
-            this.moving=false;
-            this.rotationX=0;
-            this.rotationY=0;
-            this.finalz=0;
-            this.finalx=0;
-            this.stopped=false;
-            this.finaltheta=0;
-            this.idletime+=this.flytime;
+            if (!this.game_over){
+                this.launch=false;
+                this.moving=false;
+                this.rotationX=0;
+                this.rotationY=0;
+                this.finalz=0;
+                this.finalx=0;
+                this.stopped=false;
+                this.finaltheta=0;
+                this.idletime+=this.flytime;
+            }
 
         });
         this.key_triggered_button("increase power", ["u"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and of
-            if(!this.launch)
-            {
-                this.cannon_power+=5;
-            }
-            if(this.cannon_power>=50)
-            {
-                this.cannon_power=30;
+            if(!this.game_over){
+                if(!this.launch)
+                {
+                    this.cannon_power+=5;
+                }
+                if(this.cannon_power>=50)
+                {
+                    this.cannon_power=30;
+                }
             }
 
         });
         this.key_triggered_button("decrease power", ["y"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            if(!this.launch) {
-                this.cannon_power-=5;
+            if(!this.game_over){
+                if(!this.launch) {
+                    this.cannon_power-=5;
+                }
+                if(this.cannon_power<=5)
+                {
+                    this.cannon_power=5;
+                }
             }
-            if(this.cannon_power<=5)
-            {
-                this.cannon_power=5;
+
+        });
+        
+        this.key_triggered_button("Restart", ["m"], () => {
+            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            //if restart is false, restart = true
+            if (!this.restart){
+                this.remaining_bird = 2;
+                this.food_count = 3;
+                this.launch=false;
+                this.moving=false;
+                this.rotationX=0;
+                this.rotationY=0;
+                this.finalz=0;
+                this.finalx=0;
+                this.stopped=false;
+                this.finaltheta=0;
+                this.idletime+=this.flytime;
+                this.game_over = false;
             }
 
         });
@@ -402,10 +430,18 @@ export class Project extends Scene {
         let game_over = this.add_text.create_text(
             this.add_text.transformation_function([-3.4,0.4,-5],[0.5,0.5,1]), "Game Over!"
         );
+        let restart = this.add_text.create_text(
+            this.add_text.transformation_function([-3.4,-0.5,-5],[0.15,0.15,1]), "Press \'m\' to Restart the game!"
+        );
 
-        lives["shape"].set_string(lives.text, context.context);
+        if (this.remaining_bird < 0){
+            lives["shape"].set_string("Birds: 0", context.context);
+        }
+        else{
+            lives["shape"].set_string(lives.text, context.context);
+        }
+        
         lives["shape"].draw(context,program_state,lives["transform"](program_state.camera_inverse),lives["material"]);
-
         power["shape"].set_string(power.text, context.context);
         power["shape"].draw(context,program_state,power["transform"](program_state.camera_inverse),power["material"]);
         food["shape"].set_string(food.text, context.context);
@@ -418,6 +454,9 @@ export class Project extends Scene {
         if (this.remaining_bird < 0 && this.food_count > 0){
             game_over["shape"].set_string(game_over.text, context.context);
             game_over["shape"].draw(context,program_state,game_over["transform"](program_state.camera_inverse),game_over["material"]);
+            restart["shape"].set_string(restart.text, context.context);
+            restart["shape"].draw(context,program_state,restart["transform"](program_state.camera_inverse),restart["material"]);
+            this.game_over = true;
         }
         
     }
