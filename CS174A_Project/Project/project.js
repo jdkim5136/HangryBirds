@@ -29,7 +29,6 @@ export class Project extends Scene {
             seed: new  defs.Subdivision_Sphere(4),
             sky: new defs.Subdivision_Sphere(3),
         }
-        console.log(this.shapes.box_1.arrays.texture_coord);
 
         // Cannon Variables
         this.rotationX=0;
@@ -101,6 +100,20 @@ export class Project extends Scene {
         this.remaining_bird = 2;
         this.food_count = 3;
         
+        this.box_list = [];
+        this.box_transform_list = [];
+        this.box_keep_list = [0,1,2,3,4,5,6,7,8];
+        this.hit_box = false;
+
+        this.chocolate_list = []; //save the 3d location for the chocolate
+        this.chocolate_keep_list = [0,1]; //save the index of all chocolate
+        this.chocolate_transform_list = []; //save the transformation matrix
+        this.hit_chocolate = false;
+
+        this.seed_list = [];
+        this.seed_transform_list = [];
+        this.seed_keep_list = [0,1,2];
+        this.hit_seed = false;
     }
 
     make_control_panel() {
@@ -186,6 +199,9 @@ export class Project extends Scene {
                 this.stopped=false;
                 this.finaltheta=0;
                 this.idletime+=this.flytime;
+                this.hit_chocolate = false;
+                this.hit_box = false;
+                this.hit_seed = false;
             }
 
         });
@@ -233,6 +249,12 @@ export class Project extends Scene {
                 this.finaltheta=0;
                 this.idletime+=this.flytime;
                 this.game_over = false;
+                this.chocolate_keep_list = [0,1];
+                this.hit_chocolate=false;
+                this.hit_box = false;
+                this.box_keep_list = [0,1,2,3,4,5,6,7,8];
+                this.hit_seed = false;
+                this.seed_keep_list = [0,1,2];
             }
 
         });
@@ -269,7 +291,16 @@ export class Project extends Scene {
 
         }
     }
-
+    
+    collision(object1, object2){
+        let distance = Math.sqrt(((object1[0] - object2[0]) ** 2) + ((object1[1] - object2[1]) ** 2) + ((object1[2] - object2[2])** 2));
+        if(distance <= 1){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
     display(context, program_state) {
         if (!context.scratchpad.controls) {
@@ -294,45 +325,87 @@ export class Project extends Scene {
         this.shapes.sky.draw(context, program_state, this.sky_transform, this.materials.sky_texture);
 
         //draw box
+        const arrayColumn = (arr, n) => arr.map(x=>x[n]);
+        this.box_list = [];
+        this.box_transform_list = [];
+        //box 0
         this.box_1_transform = Mat4.translation(-2, 0, -15).times(Mat4.scale(0.8,0.8,0.8));
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_transform_list.push(this.box_1_transform);
+        this.box_list.push(arrayColumn(this.box_1_transform,3));
+        //box 1
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(4, 0, 0));
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_transform_list.push(this.box_1_transform);
+        this.box_list.push(arrayColumn(this.box_1_transform,3));
+        //box 2
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(-2, 2, 0));
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_transform_list.push(this.box_1_transform);
+        this.box_list.push(arrayColumn(this.box_1_transform,3));
+        //box 3
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(4, -2, -5));
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_transform_list.push(this.box_1_transform);
+        this.box_list.push(arrayColumn(this.box_1_transform,3));
+        //box 4
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(-4, 0, 0));
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_transform_list.push(this.box_1_transform);
+        this.box_list.push(arrayColumn(this.box_1_transform,3));
+        //box 5
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(-4, 0, 0));
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_transform_list.push(this.box_1_transform);
+        this.box_list.push(arrayColumn(this.box_1_transform,3));
+        //box 6
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(2,2,0));
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_transform_list.push(this.box_1_transform);
+        this.box_list.push(arrayColumn(this.box_1_transform,3));
+        //box 7
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(4,0,0));
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_transform_list.push(this.box_1_transform);
+        this.box_list.push(arrayColumn(this.box_1_transform,3));
+        //box 8
         this.box_1_transform = this.box_1_transform.times(Mat4.translation(-2,2,0));
-        this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
+        this.box_transform_list.push(this.box_1_transform);
+        this.box_list.push(arrayColumn(this.box_1_transform,3));
 
+        for (let i = 0; i < this.box_keep_list.length; i++){
+            let a = this.box_transform_list[this.box_keep_list[i]];
+            //draw the box if it haven't been hit by the bird
+            this.shapes.box_1.draw(context, program_state, a, this.materials.texture);
+        }
+        
         //chocolate
+       this.chocolate_list = [];
+        this.chocolate_transform_list=[];
         this.chocolate_transform = Mat4.translation(2,2,-14.3);
-        this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
+        this.chocolate_transform_list.push(this.chocolate_transform);
+        this.chocolate_list.push(arrayColumn(this.chocolate_transform,3));
         this.chocolate_transform = this.chocolate_transform.times(Mat4.translation(-3.8,1.5,0));
-        this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
-        //this.chocolate_transform = this.chocolate_transform.times(Mat4.translation(1,2,0));
-        //this.shapes.chocolate.draw(context, program_state, this.chocolate_transform, this.materials.chocolate_texture);
-
+        this.chocolate_transform_list.push(this.chocolate_transform);
+        this.chocolate_list.push(arrayColumn(this.chocolate_transform,3));
+        for (let i = 0; i < this.chocolate_keep_list.length; i++){
+            let a = this.chocolate_transform_list[this.chocolate_keep_list[i]];
+            this.shapes.chocolate.draw(context, program_state, a, this.materials.chocolate_texture);
+        }
+        
         //field
         this.field_transform = Mat4.translation(0,-1,0).times(Mat4.scale(60,0.001,60))
         this.shapes.field.draw(context, program_state, this.field_transform, this.materials.field_texture);
 
         //seed
+        this.seed_list = [];
+        this.seed_transform_list=[];
         this.seed_transform = Mat4.translation(0,0,-9).times(Mat4.scale(0.3,0.5,0.3)).times(Mat4.translation(0,6,-17));
-        this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
+        this.seed_transform_list.push(this.seed_transform);
+        this.seed_list.push(arrayColumn(this.seed_transform,3));
         this.seed_transform = this.seed_transform.times(Mat4.translation(0,3.2,-15));
-        this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
+        this.seed_transform_list.push(this.seed_transform);
+        this.seed_list.push(arrayColumn(this.seed_transform,3));
         this.seed_transform = this.seed_transform.times(Mat4.translation(-10.4,-6,0));
-        this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
-
+        this.seed_transform_list.push(this.seed_transform);
+        this.seed_list.push(arrayColumn(this.seed_transform,3));
+        //draw the seed if it haven't been hit by the bird
+        for (let i = 0; i < this.seed_keep_list.length; i++){
+            let a = this.seed_transform_list[this.seed_keep_list[i]];
+            this.shapes.seed.draw(context, program_state, a, this.materials.seed_texture);
+        }
 
         //rotating cannon code:
         let cannon_transform =Mat4.identity();
@@ -413,8 +486,60 @@ export class Project extends Scene {
             let projectile_translations= Mat4.translation(xpos,ypos,zpos);
             let birdrotation=rotationYMat.times(Mat4.rotation(theta,1,0,0));//rotationYMat.times(
             //let birdrotation=rotationYMat.times(rotationXMat);
-
+            let bird_coord = projectile_translations.times(birdrotation.times(birdscale));
             this.shapes.bird.draw(context,program_state,projectile_translations.times(birdrotation.times(birdscale)), this.materials.bird_texture);
+            
+            //check if collided with box
+            //if haven't hit box yet
+            if (!this.hit_box){
+                for (let i = 0; i < this.box_list.length; i++){
+                    if (this.collision(this.box_list[i], arrayColumn(bird_coord,3))){
+                        for (let a = 0; a < this.box_keep_list.length; a++){
+                            //remove the box number from keep list (keep list is for #number of assign box that not been hit by bird)
+                            if (this.box_keep_list[a] == i){
+                                this.box_keep_list.splice(a,1);
+                            }
+                        }
+                        this.hit_box = true;
+                        break;
+                    }
+                }
+            }
+
+            //check if collided with chocolate
+            //if haven't hit anything yet
+            if (!this.hit_chocolate){
+                for (let i = 0; i < this.chocolate_list.length; i++){
+                    if (this.collision(this.chocolate_list[i],arrayColumn(bird_coord, 3))){
+                        for (let a = 0; a < this.chocolate_keep_list.length; a++){
+                            if (this.chocolate_keep_list[a] == i){
+                                this.chocolate_keep_list.splice(a,1);
+                            }
+                        }
+                        this.hit_chocolate = true;
+                        break;
+                    }
+                }
+            }
+
+            //check if collided with seed
+            //if haven't hit anything yet
+            if (!this.hit_seed){
+                for (let i = 0; i < this.seed_list.length; i++){
+                    if (this.collision(this.seed_list[i],arrayColumn(bird_coord, 3))){
+                        for (let a = 0; a < this.seed_keep_list.length; a++){
+                            if (this.seed_keep_list[a] == i){
+                                this.seed_keep_list.splice(a,1);
+                            }
+                        }
+                        this.hit_seed = true;
+                        this.food_count-=1;
+                        break;
+                    }
+                }
+            }
+            
+            
         }
         
         //display text
