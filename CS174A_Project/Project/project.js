@@ -108,7 +108,7 @@ export class Project extends Scene {
         this.key_triggered_button("Rotate Up", ["i"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
             if(!(this.launch)) {
-                this.rotationX += Math.PI / 18.0;
+                this.rotationX += Math.PI / 75.0;
             }
             if(this.rotationX<0)
             {
@@ -122,7 +122,7 @@ export class Project extends Scene {
         this.key_triggered_button("Rotate Down", ["k"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
             if(!(this.launch)) {
-                this.rotationX -= Math.PI / 18.0;
+                this.rotationX -= Math.PI / 75.0;
             }
             if(this.rotationX<0)
             {
@@ -136,7 +136,7 @@ export class Project extends Scene {
         this.key_triggered_button("Rotate Left", ["j"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
             if(!(this.launch)) {
-                this.rotationY += Math.PI / 18.0;
+                this.rotationY += Math.PI / 75.0;
             }
             if(this.rotationY<-Math.PI/2)
             {
@@ -152,7 +152,7 @@ export class Project extends Scene {
 
             if(!(this.launch))
             {
-                this.rotationY-=Math.PI/18.0;
+                this.rotationY-=Math.PI / 75.0;
             }
             if(this.rotationY<-Math.PI/2)
             {
@@ -194,11 +194,11 @@ export class Project extends Scene {
             if(!this.game_over){
                 if(!this.launch)
                 {
-                    this.cannon_power+=5;
+                    this.cannon_power+=1;
                 }
-                if(this.cannon_power>=50)
+                if(this.cannon_power>=20)
                 {
-                    this.cannon_power=30;
+                    this.cannon_power=20;
                 }
             }
 
@@ -207,11 +207,11 @@ export class Project extends Scene {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
             if(!this.game_over){
                 if(!this.launch) {
-                    this.cannon_power-=5;
+                    this.cannon_power-=1;
                 }
-                if(this.cannon_power<=5)
+                if(this.cannon_power<=2)
                 {
-                    this.cannon_power=5;
+                    this.cannon_power=2;
                 }
             }
 
