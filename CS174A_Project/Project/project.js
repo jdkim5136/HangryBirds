@@ -632,7 +632,7 @@ export class add_text{
     constructor(parent){
         this.parent = parent;
         this.shapes = {
-            text_shape: new Text_Line(10),
+            text_shape: new Text_Line(100),
         }
         this.materials = {
             text_texture: new Material(new Textured_Phong(),{
