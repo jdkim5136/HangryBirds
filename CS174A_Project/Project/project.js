@@ -593,7 +593,7 @@ export class Project extends Scene {
             restart["shape"].draw(context,program_state,restart["transform"](program_state.camera_inverse),restart["material"]);
             this.game_over = true;
         }
-        else if (this.remaining_bird <= 0 && this.food_count > 0){
+        else if (this.remaining_bird <= 0 && this.food_count > 0 && !this.moving){
             game_over_lost["shape"].set_string(game_over_lost.text, context.context);
             game_over_lost["shape"].draw(context,program_state,game_over_lost["transform"](program_state.camera_inverse),game_over_lost["material"]);
             restart["shape"].set_string(restart.text, context.context);
