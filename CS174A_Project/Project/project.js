@@ -27,7 +27,10 @@ export class Project extends Scene {
             bird: new  defs.Subdivision_Sphere(4),
             field: new Cube(),
             seed: new  defs.Subdivision_Sphere(4),
-            sky: new defs.Subdivision_Sphere(3),
+            sky: new defs.Subdivision_Sphere(4),
+
+            custom_bird: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(4),
+                
         }
         console.log(this.shapes.box_1.arrays.texture_coord);
 
@@ -67,9 +70,13 @@ export class Project extends Scene {
                 ambient: 1,diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/birds.jpg")
             }),
+
+            custom_bird_texture: new Material(new defs.Phong_Shader(),                
+                {ambient: 1, diffusivity: 0, color: hex_color("#d90404")}),
+        
             field_texture: new Material(new Textured_Phong(),{
                 color: hex_color("#000000"),
-                ambient: 1,diffusivity: 0.1, specularity: 0.1,
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/field.png")
             }),
             seed_texture: new Material(new Textured_Phong(),{
@@ -110,13 +117,13 @@ export class Project extends Scene {
             if(!(this.launch)) {
                 this.rotationX += Math.PI / 75.0;
             }
-            if(this.rotationX<0)
+            if(this.rotationX < 0)
             {
-                this.rotationX=0;
+                this.rotationX = 0;
             }
-            if(this.rotationX>Math.PI/2)
+            if(this.rotationX > Math.PI/2)
             {
-                this.rotationX=Math.PI/2;
+                this.rotationX = Math.PI/2;
             }
         });
         this.key_triggered_button("Rotate Down", ["k"], () => {
@@ -124,13 +131,13 @@ export class Project extends Scene {
             if(!(this.launch)) {
                 this.rotationX -= Math.PI / 75.0;
             }
-            if(this.rotationX<0)
+            if(this.rotationX < 0)
             {
-                this.rotationX=0;
+                this.rotationX = 0;
             }
-            if(this.rotationX>Math.PI/2)
+            if(this.rotationX > Math.PI/2)
             {
-                this.rotationX=Math.PI/2;
+                this.rotationX = Math.PI/2;
             }
         });
         this.key_triggered_button("Rotate Left", ["j"], () => {
@@ -138,13 +145,13 @@ export class Project extends Scene {
             if(!(this.launch)) {
                 this.rotationY += Math.PI / 75.0;
             }
-            if(this.rotationY<-Math.PI/2)
+            if(this.rotationY < -Math.PI/2)
             {
-                this.rotationY=-Math.PI/2;
+                this.rotationY =- Math.PI/2;
             }
-            if(this.rotationY>Math.PI/2)
+            if(this.rotationY > Math.PI/2)
             {
-                this.rotationY=Math.PI/2;
+                this.rotationY = Math.PI/2;
             }
         });
         this.key_triggered_button("Rotate Right", ["l"], () => {
@@ -152,15 +159,15 @@ export class Project extends Scene {
 
             if(!(this.launch))
             {
-                this.rotationY-=Math.PI / 75.0;
+                this.rotationY -= Math.PI / 75.0;
             }
-            if(this.rotationY<-Math.PI/2)
+            if(this.rotationY < -Math.PI/2)
             {
-                this.rotationY=-Math.PI/2;
+                this.rotationY =- Math.PI/2;
             }
-            if(this.rotationY>Math.PI/2)
+            if(this.rotationY > Math.PI/2)
             {
-                this.rotationY=Math.PI/2;
+                this.rotationY = Math.PI/2;
             }
         });
         this.key_triggered_button("launch", ["q"], () => {
@@ -292,7 +299,7 @@ export class Project extends Scene {
         this.sky_transform = Mat4.identity();
         this.sky_transform = this.sky_transform.times(Mat4.scale(60,60,60));
         this.shapes.sky.draw(context, program_state, this.sky_transform, this.materials.sky_texture);
-
+         
         //draw box
         this.box_1_transform = Mat4.translation(-2, 0, -15).times(Mat4.scale(0.8,0.8,0.8));
         this.shapes.box_1.draw(context, program_state, this.box_1_transform, this.materials.texture);
@@ -332,6 +339,50 @@ export class Project extends Scene {
         this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
         this.seed_transform = this.seed_transform.times(Mat4.translation(-10.4,-6,0));
         this.shapes.seed.draw(context, program_state, this.seed_transform, this.materials.seed_texture);
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Custom Bird model
+        // Change X, Y, Z coords to move the bird
+        let custom_bird_x = 0;
+        let custom_bird_y = 5;
+        let custom_bird_z = 0;
+        // red body
+        this.bird_transform = Mat4.identity();
+        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.scale(0.3,0.3,0.3));
+        this.shapes.custom_bird.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture);
+        // white belly
+        this.bird_transform = this.bird_transform.times(Mat4.translation(0, -0.07, -0.07)).times(Mat4.scale(0.9, 1, 0.9));
+        this.shapes.custom_bird.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("ffffff")}));
+        this.bird_transform = Mat4.identity();
+        // Left Eye 
+        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(-0.06, 0, -0.2)).times(Mat4.scale(0.12, 0.12, 0.11));
+        this.shapes.custom_bird.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("ffffff")}));
+        this.bird_transform = this.bird_transform.times(Mat4.translation(-0.09, -0.37, -0.86)).times(Mat4.scale(0.14, 0.14, 0.14));
+        this.shapes.custom_bird.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("000000")}));
+        this.bird_transform = Mat4.identity();
+        // Right Eye
+        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0.06, 0, -0.2)).times(Mat4.scale(0.12, 0.12, 0.11));
+        this.shapes.custom_bird.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("ffffff")}));
+        this.bird_transform = this.bird_transform.times(Mat4.translation(0.09, -0.37, -0.86)).times(Mat4.scale(0.14, 0.14, 0.14));
+        this.shapes.custom_bird.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("000000")}));
+        this.bird_transform = Mat4.identity();
+        // Eyebrows
+        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, 0.1, -0.28)).times(Mat4.scale(0.2, 0.022, 0.022));
+        this.shapes.box_1.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("000000")}));
+        // Hair On Top
+        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, 0.29, 0)).times(Mat4.scale(0.022, 0.1, 0.022));
+        this.shapes.box_1.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("d90404")}));
+        this.bird_transform = this.bird_transform.times(Mat4.rotation(0.3, 0.5, 1.3, 1)).times(Mat4.translation(-3, 0.5, 1));
+        this.shapes.box_1.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("d90404")}));
+        this.bird_transform = this.bird_transform.times(Mat4.rotation(0.3, -0.5, -1.1, 1)).times(Mat4.translation(4.7, -1.5, 1));
+        this.shapes.box_1.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("d90404")}));
+            
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            
 
 
         //rotating cannon code:
