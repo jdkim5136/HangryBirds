@@ -49,6 +49,7 @@ export class Project extends Scene {
         this.finaltheta=0;
         this.restart = false;
         this.game_over = false;
+        this.launchtime=0;
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
         //        you get to requirements 6 and 7 you will need different ones.
@@ -208,6 +209,7 @@ export class Project extends Scene {
                 this.hit_box = false;
                 this.hit_seed = false;
                 this.reloaded = true;
+                this.launchtime=0;
             }
 
         });
@@ -260,6 +262,7 @@ export class Project extends Scene {
                 this.seed_keep_list = [0,1,2];
                 this.reloaded = false;
                 this.bird_coord = undefined;
+                this.launchtime=0;
             }
 
         });
@@ -501,6 +504,11 @@ export class Project extends Scene {
         //if launchingiih/lauched change bird coords
         else
         {
+            if(this.launchtime===0)
+            {
+                this.launchtime=t;
+            }
+
             this.flytime+=dt;
             let tip_of_cannon = rotationYMat.times(rotationXMat.times(vec4(0,0,4,1)));
 
@@ -512,12 +520,12 @@ export class Project extends Scene {
             let zintial=-tip_of_cannon[2];//-2*Math.cos(this.rotationX)*Math.cos(this.rotationY);
             let intialHorizontalVelo=this.cannon_power*Math.cos(this.rotationX);
             let intialYVelo=this.cannon_power*Math.sin(this.rotationX);
-            let ypos= yintial+intialYVelo*(t-this.idletime)-4.9*(t-this.idletime)*(t-this.idletime);
-            let horizontal_position=-(intialHorizontalVelo*(t-this.idletime));
+            let ypos= yintial+intialYVelo*(t-this.launchtime)-4.9*(t-this.launchtime)*(t-this.launchtime);
+            let horizontal_position=-(intialHorizontalVelo*(t-this.launchtime));
             let xpos= xintial+Math.sin(this.rotationY)*horizontal_position;
             let zpos= zintial+Math.cos(this.rotationY)*horizontal_position;
 
-            let theta=Math.atan((intialYVelo-9.8*(t-this.idletime))/intialHorizontalVelo);
+            let theta=Math.atan((intialYVelo-9.8*(t-this.launchtime))/intialHorizontalVelo);
 
 
 
