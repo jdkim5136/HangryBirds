@@ -21,7 +21,7 @@ The goal of the game is to eat all the seeds.
 - Texture Mapping (used for blocks, food, bird, ground, and sky)
 
 ## Credits
-Joshua Kim - @jdkim5136
-Yongjia Huang - @yongjiahuang134
-Adithi Ramesh - @AR2302
-Matthew Van De Mheen - @mvandemheen892
+- Joshua Kim - @jdkim5136
+- Yongjia Huang - @yongjiahuang134
+- Adithi Ramesh - @AR2302
+- Matthew Van De Mheen - @mvandemheen892
