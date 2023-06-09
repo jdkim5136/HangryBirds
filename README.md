@@ -21,7 +21,7 @@ The goal of the game is to eat all the seeds.
 - Texture Mapping (used for blocks, food, bird, ground, and sky)
 
 ## How to download/play the game
-Download the ZIP file, and unpack it somewhere on your computer. Open up the HangryBirds folder, and you will see CS174A_Project and the README.md. Open up the CS174A_Project directory, then open up the Project directory. From there, run host.bat, and the game should now be running on localhost:8000.
+Download the ZIP file, and unpack it somewhere on your computer. You want to open up the CS174AHangryBirds-main directory. Inside that directory, you will see a readme file and another directory. Open up the CS174A_Project directory, and open up the Project directory. Inside this directory, you will see many files. The file that we are concerned with here is the host.bat file. Running this file will start the server, which you can access on localhost:8000. Enjoy the game!
 
 ## Credits
 - Joshua Kim - @jdkim5136
