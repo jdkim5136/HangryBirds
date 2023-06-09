@@ -124,12 +124,11 @@ export class Project extends Scene {
         this.seed_keep_list = [0,1,2];
         this.hit_seed = false;
         this.reloaded = false;
+        this.bird_coord = undefined;
     }
 
     make_control_panel() {
-        // TODO:  Implement requirement #5 using a key_triggered_button that responds to the 'c' key.
         this.key_triggered_button("Rotate Up", ["i"], () => {
-            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
             if(!(this.launch)) {
                 this.rotationX += Math.PI / 75.0;
             }
@@ -143,7 +142,6 @@ export class Project extends Scene {
             }
         });
         this.key_triggered_button("Rotate Down", ["k"], () => {
-            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
             if(!(this.launch)) {
                 this.rotationX -= Math.PI / 75.0;
             }
@@ -157,7 +155,6 @@ export class Project extends Scene {
             }
         });
         this.key_triggered_button("Rotate Left", ["j"], () => {
-            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
             if(!(this.launch)) {
                 this.rotationY += Math.PI / 75.0;
             }
@@ -171,7 +168,6 @@ export class Project extends Scene {
             }
         });
         this.key_triggered_button("Rotate Right", ["l"], () => {
-            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
 
             if(!(this.launch))
             {
@@ -187,13 +183,13 @@ export class Project extends Scene {
             }
         });
         this.key_triggered_button("launch", ["q"], () => {
-            // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
             if(!this.stopped)
             {
                 this.launch=true;
                 this.moving=true;
                 this.flytime=0;
                 this.remaining_bird-=1;
+                this.reloaded = false;
             }
 
         });
@@ -263,6 +259,7 @@ export class Project extends Scene {
                 this.hit_seed = false;
                 this.seed_keep_list = [0,1,2];
                 this.reloaded = false;
+                this.bird_coord = undefined;
             }
 
         });
@@ -546,6 +543,7 @@ export class Project extends Scene {
             let bird_coord = projectile_translations.times(birdrotation.times(birdscale));
             
             this.bird_transform = projectile_translations.times(birdrotation.times(birdscale));
+            this.bird_coord = bird_coord;
             this.shapes.custom_bird.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture);
             // white belly
 
@@ -649,7 +647,14 @@ export class Project extends Scene {
             
             
         }
-        
+        let desired = this.initial_camera_location;
+        if(!this.reloaded && this.launch  && this.bird_coord != undefined && !this.game_over){
+            desired = this.bird_coord;
+            desired = Mat4.inverse(desired.times(Mat4.translation(0, 0, 5)));
+        }
+        let result_location = desired.map((x, i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.8));
+        program_state.set_camera(result_location);
+
         //display text
         let lives = this.add_text.create_text(
             this.add_text.transformation_function([-3.5,-1.6,-5],[0.1,0.1,1]), "Birds: "+  this.remaining_bird
