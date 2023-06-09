@@ -20,6 +20,9 @@ The goal of the game is to eat all the seeds.
 - Physics-Based Animation (projectile motion animation, different velocities for each bird)
 - Texture Mapping (used for blocks, food, bird, ground, and sky)
 
+## How to download/play the game
+Download the ZIP file, and unpack it somewhere on your computer. Open up the HangryBirds folder, and you will see CS174A_Project and the README.md. Open up the CS174A_Project directory, then open up the Project directory. From there, run host.bat, and the game should now be running on localhost:8000.
+
 ## Credits
 - Joshua Kim - @jdkim5136
 - Yongjia Huang - @yongjiahuang134
