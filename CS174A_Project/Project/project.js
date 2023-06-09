@@ -71,9 +71,13 @@ export class Project extends Scene {
                 ambient: 1,diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/birds.jpg")
             }),
+
+            custom_bird_texture: new Material(new defs.Phong_Shader(),                
+                {ambient: 1, diffusivity: 0, color: hex_color("#d90404")}),
+        
             field_texture: new Material(new Textured_Phong(),{
                 color: hex_color("#000000"),
-                ambient: 1,diffusivity: 0.1, specularity: 0.1,
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/field.png")
             }),
             seed_texture: new Material(new Textured_Phong(),{
