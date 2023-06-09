@@ -31,7 +31,7 @@ export class Project extends Scene {
 
             custom_bird: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(4),
             tri: new defs.Triangle(),
-            //tet: new defs.Tetrahedron(false),
+            tet: new defs.Tetrahedron(),
                 
         }
         console.log(this.shapes.box_1.arrays.texture_coord);
@@ -375,6 +375,7 @@ export class Project extends Scene {
         this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, 0.1, -0.28)).times(Mat4.scale(0.2, 0.022, 0.022));
         this.shapes.box_1.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("000000")}));
         this.bird_transform = Mat4.identity();
+        
         // Hair On Top
         this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, 0.29, 0)).times(Mat4.scale(0.022, 0.1, 0.022));
         this.shapes.box_1.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("d90404")}));
@@ -382,20 +383,29 @@ export class Project extends Scene {
         this.shapes.box_1.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("d90404")}));
         this.bird_transform = this.bird_transform.times(Mat4.rotation(0.3, -0.5, -1.1, 1)).times(Mat4.translation(4.7, -1.5, 1));
         this.shapes.box_1.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("d90404")}));
-        
-        // Beak (WIP)
-        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, -0.1, -0.3)).times(Mat4.scale(0.11, 0.06, 1));
-        this.bird_transform = this.bird_transform.times(Mat4.rotation(0, 0, 0, 1));
-        this.shapes.tri.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("#fcba03")}));
         this.bird_transform = Mat4.identity();
-        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, -0.1, -0.3)).times(Mat4.scale(0.11, 0.06, 1));
-        this.bird_transform = this.bird_transform.times(Mat4.rotation(Math.PI/2, 0, 0, 1));
-        this.shapes.tri.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("#fcba03")}));
 
+        // New Beak   
+        let beak_rotate_1 = 103.4;
+        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, -0.13, -0.25)).times(Mat4.rotation(-beak_rotate_1, beak_rotate_1, -beak_rotate_1, 1));
+        this.bird_transform = this.bird_transform.times(Mat4.scale(0.1, 0.2, 0.11));
+        this.shapes.tet.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("#fcba03")}));
+        
+        let beak_rotate_2 = Math.PI * 3
+        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, -0.13, -0.25)).times(Mat4.rotation(beak_rotate_2, beak_rotate_2, 0, 1));
+        this.bird_transform = this.bird_transform.times(Mat4.scale(0.2, 0.1, 0.11));
+        this.shapes.tet.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("#fcba03")}));
 
-        // this.bird_transform = Mat4.identity();
-        // this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(1, 1, -1)).times(Mat4.scale(1, 1, 1));
-        // this.shapes.tet.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("#fcba03")}));
+        let beak_rotate_3 = Math.PI * 12.929;
+        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, -0.13, -0.25)).times(Mat4.rotation(beak_rotate_3, 0, beak_rotate_3, 1));
+        this.bird_transform = this.bird_transform.times(Mat4.scale(0.2, 0.1, 0.11));
+        this.shapes.tet.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("#fcba03")}));
+
+        let beak_rotate_4 = Math.PI * 64.43;
+        this.bird_transform = Mat4.translation(custom_bird_x, custom_bird_y, custom_bird_z).times(Mat4.translation(0, -0.13, -0.25)).times(Mat4.rotation(beak_rotate_4, 0, beak_rotate_4, 1));
+        this.bird_transform = this.bird_transform.times(Mat4.scale(0.11, 0.1, 0.2));
+        this.shapes.tet.draw(context, program_state, this.bird_transform, this.materials.custom_bird_texture.override({color:hex_color("#fcba03")}));
+
         
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
